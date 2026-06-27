@@ -15,9 +15,7 @@ const pool = new Pool({
         rejectUnauthorized: false
     }
 });
-app.get("/", (req, res) => {
-    res.send("Backend Running Successfully");
-});
+
 
 app.post("/login", async (req, res) => {
 
