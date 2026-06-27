@@ -8,16 +8,19 @@ async function login() {
         return;
     }
 
-    const response = await fetch("http://localhost:5000/login", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            email,
-            password
-        })
-    });
+    const response = await fetch(
+        "https://login-backend-ic0f.onrender.com/login",
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                email,
+                password
+            })
+        }
+    );
 
     const data = await response.json();
 
