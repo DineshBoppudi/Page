@@ -150,6 +150,45 @@ app.put("/update", async (req, res) => {
         });
     }
 });
+// delete 
+app.delete("/delete", async (req, res) => {
+
+    try {
+
+        const { email } = req.body;
+
+        const user = await pool.query(
+            "SELECT * FROM users WHERE email = $1",
+            [email]
+        );
+
+        if (user.rows.length === 0) {
+            return res.json({
+                success: false,
+                message: "User not found"
+            });
+        }
+
+        await pool.query(
+            "DELETE FROM users WHERE email = $1",
+            [email]
+        );
+
+        res.json({
+            success: true,
+            message: "User Deleted"
+        });
+
+    } catch (error) {
+
+        console.log(error);
+
+        res.status(500).json({
+            success: false,
+            message: "Server Error"
+        });
+    }
+});
 
 const PORT = process.env.PORT || 5000;
 
