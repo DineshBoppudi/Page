@@ -16,7 +16,59 @@ const pool = new Pool({
     }
 });
 
+// Home Route
+app.get("/", (req, res) => {
+    res.send("Backend Running Successfully");
+});
 
+// Signup
+app.post("/signup", async (req, res) => {
+
+    try {
+
+        const { email, password } = req.body;
+
+        if (!email || !password) {
+            return res.json({
+                success: false,
+                message: "Please fill all fields"
+            });
+        }
+
+        const user = await pool.query(
+            "SELECT * FROM users WHERE email = $1",
+            [email]
+        );
+
+        if (user.rows.length > 0) {
+            return res.json({
+                success: false,
+                message: "User already exists"
+            });
+        }
+
+        await pool.query(
+            "INSERT INTO users(email, password) VALUES($1, $2)",
+            [email, password]
+        );
+
+        res.json({
+            success: true,
+            message: "Signup Successful"
+        });
+
+    } catch (error) {
+
+        console.log(error);
+
+        res.status(500).json({
+            success: false,
+            message: "Server Error"
+        });
+    }
+});
+
+// Login
 app.post("/login", async (req, res) => {
 
     try {
@@ -47,44 +99,6 @@ app.post("/login", async (req, res) => {
         res.json({
             success: true,
             message: "Login Successful"
-        });
-
-    } catch (error) {
-
-        console.log(error);
-
-        res.status(500).json({
-            success: false,
-            message: "Server Error"
-        });
-    }
-});
-app.post("/signup", async (req, res) => {
-
-    try {
-
-        const { email, password } = req.body;
-
-        const user = await pool.query(
-            "SELECT * FROM users WHERE email = $1",
-            [email]
-        );
-
-        if (user.rows.length > 0) {
-            return res.json({
-                success: false,
-                message: "User already exists"
-            });
-        }
-
-        await pool.query(
-            "INSERT INTO users(email,password) VALUES($1,$2)",
-            [email, password]
-        );
-
-        res.json({
-            success: true,
-            message: "Signup Successful"
         });
 
     } catch (error) {
