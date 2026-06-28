@@ -111,6 +111,45 @@ app.post("/login", async (req, res) => {
         });
     }
 });
+// update
+app.put("/update", async (req, res) => {
+
+    try {
+
+        const { email, password } = req.body;
+
+        const user = await pool.query(
+            "SELECT * FROM users WHERE email = $1",
+            [email]
+        );
+
+        if (user.rows.length === 0) {
+            return res.json({
+                success: false,
+                message: "User not found"
+            });
+        }
+
+        await pool.query(
+            "UPDATE users SET password = $1 WHERE email = $2",
+            [password, email]
+        );
+
+        res.json({
+            success: true,
+            message: "Password Updated"
+        });
+
+    } catch (error) {
+
+        console.log(error);
+
+        res.status(500).json({
+            success: false,
+            message: "Server Error"
+        });
+    }
+});
 
 const PORT = process.env.PORT || 5000;
 
