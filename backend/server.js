@@ -59,6 +59,44 @@ app.post("/login", async (req, res) => {
         });
     }
 });
+app.post("/signup", async (req, res) => {
+
+    try {
+
+        const { email, password } = req.body;
+
+        const user = await pool.query(
+            "SELECT * FROM users WHERE email = $1",
+            [email]
+        );
+
+        if (user.rows.length > 0) {
+            return res.json({
+                success: false,
+                message: "User already exists"
+            });
+        }
+
+        await pool.query(
+            "INSERT INTO users(email,password) VALUES($1,$2)",
+            [email, password]
+        );
+
+        res.json({
+            success: true,
+            message: "Signup Successful"
+        });
+
+    } catch (error) {
+
+        console.log(error);
+
+        res.status(500).json({
+            success: false,
+            message: "Server Error"
+        });
+    }
+});
 
 const PORT = process.env.PORT || 5000;
 
